@@ -216,6 +216,52 @@ kann der Vorstand Termine absagen.
 
 ---
 
+## 7. Nur-Lese-Login für Mitglieder
+
+Ein Login, das **alles sehen**, aber **nichts ändern/löschen/freigeben** darf
+(z. B. `mitglieder@kinderfestultras.de` für die Stammmitglieder). Zweite Allowlist
+`mitglieder`; Lesen für Vorstand **und** Mitglieder, Ändern bleibt beim Vorstand.
+SQL Editor → Run:
+
+```sql
+-- ============ Read-only Mitglieder ============
+create table if not exists public.mitglieder (email text primary key);
+alter table public.mitglieder enable row level security;
+
+-- Wer darf LESEN? (Vorstand ODER read-only Mitglied)
+create or replace function public.is_mitglied()
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.vorstand   v where lower(v.email) = lower(auth.jwt() ->> 'email'))
+      or exists (select 1 from public.mitglieder m where lower(m.email) = lower(auth.jwt() ->> 'email'));
+$$;
+revoke all on function public.is_mitglied() from public, anon;
+grant execute on function public.is_mitglied() to authenticated;
+
+-- SELECT jetzt fuer alle Mitglieder; UPDATE/DELETE bleiben (aus Schritt 5b/6) beim Vorstand
+drop policy if exists "ideen_select_vorstand"     on public.ideen;
+create policy "ideen_select_mitglied"     on public.ideen      for select to authenticated using (public.is_mitglied());
+
+drop policy if exists "anwaerter_select_vorstand" on public.anwaerter;
+create policy "anwaerter_select_mitglied" on public.anwaerter  for select to authenticated using (public.is_mitglied());
+
+drop policy if exists "wett_select_vorstand"      on public.wetttrinken;
+create policy "wett_select_mitglied"      on public.wetttrinken for select to authenticated using (public.is_mitglied());
+
+-- Read-only Login auf die Liste
+insert into public.mitglieder (email) values ('mitglieder@kinderfestultras.de')
+on conflict (email) do nothing;
+```
+
+Dann noch (wie beim Vorstand) einen **Auth-Account** anlegen: Authentication →
+Users → Add user → `mitglieder@kinderfestultras.de` + Passwort, „Auto Confirm" an.
+Wer sich damit einloggt, sieht alles, aber **ohne** Aktions-Buttons — und selbst
+wenn jemand tricksen wollte, blockt die Datenbank jedes Ändern (RLS).
+
+> Wichtig: Diese E-Mail gehört in `mitglieder`, **nicht** in `vorstand`. Steht eine
+> Adresse in beiden, gewinnt Vorstand (darf dann doch alles).
+
+---
+
 ## Optional: Spam-Bremse
 
 ## Optional: Spam-Bremse

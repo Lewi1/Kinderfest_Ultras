@@ -234,10 +234,20 @@
     });
   }
 
-  function checkVorstand() {
-    return fetch(REST + '/rpc/is_vorstand', {
+  var canEdit = false;  // true = Vorstand (darf aendern), false = Nur-Lese-Mitglied
+
+  function rpc(name) {
+    return fetch(REST + '/rpc/' + name, {
       method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: '{}'
     }).then(function (r) { return r.ok ? r.json() : false; }).catch(function () { return false; });
+  }
+  // { member: darf rein & lesen, editor: darf aendern/loeschen }
+  // Vorstand zaehlt immer als Mitglied (auch falls is_mitglied noch nicht existiert).
+  function checkAccess() {
+    return Promise.all([rpc('is_mitglied'), rpc('is_vorstand')]).then(function (a) {
+      var editor = !!a[1];
+      return { member: !!a[0] || editor, editor: editor };
+    });
   }
 
   // ---- Views ----
@@ -245,7 +255,7 @@
   function showDash() {
     el('login-view').hidden = true; el('dash-view').hidden = false;
     var email = session && session.user && session.user.email ? session.user.email : '';
-    el('who').textContent = email ? ('Angemeldet als ' + email) : 'Angemeldet';
+    el('who').textContent = (email ? ('Angemeldet als ' + email) : 'Angemeldet') + (canEdit ? '' : ' · Nur-Lese-Zugang');
     loadAnwaerter();
     loadIdeen();
     loadWetttrinken();
@@ -284,12 +294,13 @@
         '<dt>Wetttrinken</dt><dd>' + esc(r.wetttrinken || '–') + '</dd>' +
         '<dt>Motivation</dt><dd class="motiv">' + esc(r.motivation) + '</dd>' +
       '</dl>' +
+      (canEdit ?
       '<div class="aw-actions">' +
         '<button class="btn btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="angenommen">Angenommen</button>' +
         '<button class="btn btn--ghost btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="abgelehnt">Abgelehnt</button>' +
         '<button class="btn btn--ghost btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="neu">Zurück auf „neu"</button>' +
         '<button class="btn btn--danger btn--sm" data-act="aw-del" data-id="' + r.id + '" data-name="' + esc(r.name) + '">Löschen</button>' +
-      '</div>';
+      '</div>' : '');
     return div;
   }
 
@@ -309,10 +320,12 @@
     div.className = 'idea';
     var st = r.status || 'neu';
     var actions = '';
-    if (st !== 'approved') { actions += '<button class="btn btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="approved">Freigeben</button>'; }
-    if (st !== 'abgelehnt') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="abgelehnt">Ablehnen</button>'; }
-    if (st !== 'neu') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="neu">Auf „neu"</button>'; }
-    actions += '<button class="btn btn--danger btn--sm" data-act="idea-del" data-id="' + r.id + '">Löschen</button>';
+    if (canEdit) {
+      if (st !== 'approved') { actions += '<button class="btn btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="approved">Freigeben</button>'; }
+      if (st !== 'abgelehnt') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="abgelehnt">Ablehnen</button>'; }
+      if (st !== 'neu') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="neu">Auf „neu"</button>'; }
+      actions += '<button class="btn btn--danger btn--sm" data-act="idea-del" data-id="' + r.id + '">Löschen</button>';
+    }
     div.innerHTML =
       '<span class="txt">' + esc(r.text) + '</span>' +
       '<span class="badge badge--' + esc(st) + '">' + esc(st) + '</span>' +
@@ -338,9 +351,9 @@
     div.innerHTML =
       '<span class="txt"><strong>' + esc(r.name) + '</strong> — ' + esc(r.slot) + '</span>' +
       '<span class="when">' + esc(fmtDate(r.created_at)) + '</span>' +
-      '<span class="idea-actions">' +
+      (canEdit ? '<span class="idea-actions">' +
         '<button class="btn btn--danger btn--sm" data-act="wett-del" data-id="' + r.id + '" data-slot="' + esc(r.slot) + '" data-name="' + esc(r.name) + '">Löschen</button>' +
-      '</span>';
+      '</span>' : '');
     return div;
   }
 
@@ -381,13 +394,14 @@
     btn.disabled = true;
     setLoginStatus('Prüfe Anmeldung …', false);
     login(email, pass).then(function () {
-      return checkVorstand();
-    }).then(function (ok) {
-      if (!ok) {
-        setLoginStatus('Angemeldet, aber diese Adresse ist nicht als Vorstand hinterlegt. Kein Zugriff.', true);
+      return checkAccess();
+    }).then(function (acc) {
+      if (!acc.member) {
+        setLoginStatus('Angemeldet, aber diese Adresse ist nicht als Mitglied hinterlegt. Kein Zugriff.', true);
         clearSession();
         return;
       }
+      canEdit = acc.editor;
       setLoginStatus('', false);
       el('li-pass').value = '';
       showDash();
@@ -403,9 +417,9 @@
 
   // ---- Start: bestehende Sitzung prüfen ----
   if (session && session.access_token) {
-    checkVorstand().then(function (ok) {
-      if (ok) { showDash(); }
-      else { return refreshSession().then(checkVorstand).then(function (ok2) { if (ok2) { showDash(); } else { clearSession(); showLogin(); } }); }
+    checkAccess().then(function (acc) {
+      if (acc.member) { canEdit = acc.editor; showDash(); }
+      else { return refreshSession().then(checkAccess).then(function (acc2) { if (acc2.member) { canEdit = acc2.editor; showDash(); } else { clearSession(); showLogin(); } }); }
     }).catch(function () { clearSession(); showLogin(); });
   } else {
     showLogin();

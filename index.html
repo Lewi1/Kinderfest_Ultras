@@ -703,8 +703,8 @@
   }
 
   // Kinderfest-Datum hier anpassen:
-  var FEST_START = new Date('2026-07-11T08:00:00+02:00');
-  var FEST_ENDE  = new Date('2026-07-12T00:00:00+02:00');
+  var FEST_START = new Date('2026-07-10T16:00:00+02:00');
+  var FEST_ENDE  = new Date('2026-07-13T21:00:00+02:00');
 
   var track = document.getElementById('ticker-track');
   track.innerHTML += track.innerHTML; // Endlosschleife
@@ -757,9 +757,15 @@
 
   // Festzeit hier anpassen (Tage & Uhrzeiten):
   var FESTZEIT = [
-    { tag: 'Freitag, 10.07.', zeiten: ['16:00', '17:00', '18:00', '19:00', '20:00'] },
-    { tag: 'Samstag, 11.07.', zeiten: ['11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'] }
+    { tag: 'Freitag, 10.07.', zeiten: ['16:00', '17:00', '18:00', '19:00', '20:00', '21:00'] },
+    { tag: 'Samstag, 11.07.', zeiten: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'] },
+    { tag: 'Sonntag, 12.07.',  zeiten: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'] },
+    { tag: 'Montag, 13.07.',   zeiten: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'] }
   ];
+  // Terminbuchung moeglich BIS hierher (Montag, 21 Uhr). Danach automatisch geschlossen.
+  var BUCHUNG_ENDE = new Date('2026-07-13T21:00:00+02:00');
+  function buchungOffen() { return new Date() < BUCHUNG_ENDE; }
+
   var slotWahl = null;
   var hint = document.getElementById('booking-hint');
   var hintStandard = hint.textContent;
@@ -789,9 +795,9 @@
         b.type = 'button';
         b.className = 'slot';
         b.textContent = z;
-        if (belegt[key]) {
+        if (belegt[key] || !buchungOffen()) {
           b.disabled = true;
-          b.title = 'Belegt';
+          b.title = belegt[key] ? 'Belegt' : 'Buchung geschlossen';
         } else {
           b.setAttribute('aria-pressed', slotWahl === key ? 'true' : 'false');
           b.addEventListener('click', function () {
@@ -805,6 +811,13 @@
       day.appendChild(grid);
       wrap.appendChild(day);
     });
+    // Buchungsfenster zu? Formular sperren + Hinweis.
+    var chBtn = document.querySelector('#challenge-form button');
+    var chName = document.getElementById('ch-name');
+    var offen = buchungOffen();
+    if (chBtn) { chBtn.disabled = !offen; }
+    if (chName) { chName.disabled = !offen; }
+    if (!offen) { setHint('Terminbuchung geschlossen (seit Montag, 13.07., 21 Uhr). Ab jetzt wird nur noch am Pavillon per Handschlag ausgemacht.', false); }
   }
   renderSlots();
 
@@ -826,6 +839,10 @@
     var input = document.getElementById('ch-name');
     var name = input.value.trim();
     if (!name) { return; }
+    if (!buchungOffen()) {
+      setHint('Terminbuchung ist seit Montag 21 Uhr geschlossen. Am Pavillon geht aber immer noch was.', true);
+      return;
+    }
     if (!slotWahl) {
       setHint('Bitte zuerst oben einen Wunschtermin antippen — der Vorstand hat noch alles frei.', true);
       return;

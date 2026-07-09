@@ -392,6 +392,21 @@
   .idea-remove:focus-visible { outline: 2px dashed var(--stamp); outline-offset: 1px; }
   .idea-intro { max-width: 56ch; margin: 0 auto 22px; text-align: center; }
 
+  /* ---------- Anwaerter ---------- */
+  .anwaerter-form { max-width: 460px; margin: 26px auto 4px; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+  .anwaerter-form .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; font-size: .74rem; color: var(--hop); }
+  .field-label .opt { color: rgba(26,22,19,.5); font-weight: 400; letter-spacing: .06em; }
+  .anwaerter-form input, .anwaerter-form textarea, .anwaerter-form select {
+    font-family: Georgia, 'Times New Roman', serif; font-size: 1rem; color: var(--ink);
+    background: var(--cream); border: 1px solid var(--edge); border-radius: 10px;
+    padding: 10px 14px; width: 100%; box-sizing: border-box;
+  }
+  .anwaerter-form textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+  .anwaerter-form input:focus-visible, .anwaerter-form textarea:focus-visible, .anwaerter-form select:focus-visible { outline: 2px dashed var(--hop); outline-offset: 2px; }
+  .anwaerter-form .btn { align-self: center; margin-top: 6px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
   /* ---------- Treffpunkt ---------- */
   .pavillon { text-align: center; }
   .pavillon .place {
@@ -537,6 +552,46 @@
     </div>
   </section>
 
+  <section id="anwaerter">
+    <div class="section-head">
+      <p class="eyebrow label">Warteliste 2027</p>
+      <h2 class="display">Anw&auml;rter-Aufnahme</h2>
+      <hr class="stitch-rule">
+    </div>
+    <div class="patch-card">
+      <p class="idea-intro">Der Verein ist voll &mdash; offiziell wird der Beitritt 2027 <a href="#wetttrinken">im Wetttrinken geregelt</a>. Wer trotzdem seinen Hut in den Ring werfen will, tr&auml;gt sich hier in die offizielle Warteliste ein. Der Vorstand sichtet jede Bewerbung pers&ouml;nlich &mdash; und mit geb&uuml;hrender Skepsis.</p>
+      <form class="anwaerter-form" id="anwaerter-form" novalidate>
+        <div class="field">
+          <label class="field-label" for="aw-name">Name</label>
+          <input id="aw-name" type="text" maxlength="80" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="aw-kontakt">Kontakt (Handy oder E-Mail)</label>
+          <input id="aw-kontakt" type="text" maxlength="120" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="aw-ort">Wohnort / Bezug zu Isny <span class="opt">(optional)</span></label>
+          <input id="aw-ort" type="text" maxlength="120">
+        </div>
+        <div class="field">
+          <label class="field-label" for="aw-motivation">Warum willst du in die Kurve?</label>
+          <textarea id="aw-motivation" maxlength="1000" rows="4" required></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label" for="aw-wett">Bereit f&uuml;rs Wetttrinken?</label>
+          <select id="aw-wett">
+            <option value="Klar, jederzeit">Klar, jederzeit</option>
+            <option value="Mit Radler zur Not">Mit Radler zur Not (z&auml;hlt laut &sect;3 nicht)</option>
+            <option value="Lieber Ehrenmitglied ohne Duell">Lieber Ehrenmitglied ohne Duell</option>
+          </select>
+        </div>
+        <input class="hp" id="aw-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn" type="submit">Bewerbung einreichen</button>
+      </form>
+      <p class="form-note" id="anwaerter-status">Deine Bewerbung geht direkt und vertraulich an den Vorstand. Eine Aufnahme-Garantie gibt es nicht &mdash; ein Ehrenwort auf sorgf&auml;ltige Sichtung schon.</p>
+    </div>
+  </section>
+
   <section>
     <div class="section-head">
       <p class="eyebrow label">Die Kollektion</p>
@@ -585,7 +640,8 @@
         <input id="idea-input" type="text" maxlength="120" placeholder="Deine Idee f&uuml;r 2027 &hellip;" required>
         <button class="btn" type="submit">In den Speicher</button>
       </form>
-      <p class="form-note">Eigene Ideen bleiben auf diesem Ger&auml;t gespeichert, bis sie beim Vereinstreffen offiziell vorgetragen werden.</p>
+      <p class="form-note">Deine Idee landet im offiziellen Speicher des Vorstands und wird beim Vereinstreffen gesichtet. Was der Vorstand freigibt, erscheint hier f&uuml;r alle.</p>
+      <p class="form-note" id="idea-status" hidden></p>
     </div>
   </section>
 
@@ -608,9 +664,44 @@
   <p>Kein eingetragener Verein &mdash; aber ein Ehrenwort.</p>
   <p>S&auml;mtliche Erl&ouml;se zugunsten des Kinderfests Isny.</p>
   <p class="croc" title="Ihr seid crazy.">🐊</p>
+  <p><a class="label" href="intern.html" style="color: rgba(241,235,219,.55); letter-spacing: .2em;">Mitglieder</a></p>
 </footer>
 
 <script>
+  /* =====================================================================
+     SUPABASE  —  hier den Publishable-Key eintragen (Anleitung: SUPABASE_SETUP.md).
+     Der Publishable-Key (sb_publishable_...) gehoert bewusst in den Client-Code;
+     geschuetzt wird nicht durch Geheimhaltung, sondern durch Row Level Security
+     (nur Einfuegen). Der Secret-Key (sb_secret_...) darf NIE hier rein.
+     Solange der Platzhalter steht, laeuft die Seite im Lokal-Modus.
+     ===================================================================== */
+  var SUPABASE_URL      = 'https://mqqjtjbfywwwiansqmbh.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_KGN_zLdcHZBHCA6KMvtb4Q_0Xmq0oDy';   // Settings -> API Keys -> "Publishable key"
+
+  // Scharf, sobald ein echter Publishable-Key (oder Legacy-anon-JWT) eingetragen ist:
+  var SB_ON = /^(sb_publishable_|eyJ)/.test(SUPABASE_ANON_KEY);
+
+  function sbHeaders(extra) {
+    var h = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY };
+    if (extra) { for (var k in extra) { h[k] = extra[k]; } }
+    return h;
+  }
+  function sbInsert(table, row) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table, {
+      method: 'POST',
+      headers: sbHeaders({ 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }),
+      body: JSON.stringify(row)
+    }).then(function (r) {
+      if (!r.ok) { return r.text().then(function (t) { throw new Error(t || ('HTTP ' + r.status)); }); }
+      return true;
+    });
+  }
+  function sbSelect(table, query) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, { headers: sbHeaders() })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .catch(function () { return []; });
+  }
+
   // Kinderfest-Datum hier anpassen:
   var FEST_START = new Date('2026-07-11T08:00:00+02:00');
   var FEST_ENDE  = new Date('2026-07-12T00:00:00+02:00');
@@ -736,7 +827,18 @@
     input.value = '';
   });
 
+  // Eigene Einreichungen bleiben lokal gemerkt (als "Eingereicht"), zusaetzlich
+  // landet die Idee zentral in Supabase. Freigegebene Ideen kommen fuer alle zurueck.
   var eigeneIdeen = load('kfu-ideen');
+  var ideaStatus = document.getElementById('idea-status');
+
+  function setIdeaStatus(text, warn) {
+    if (!ideaStatus) { return; }
+    ideaStatus.textContent = text;
+    ideaStatus.className = warn ? 'form-note form-note--warn' : 'form-note';
+    ideaStatus.hidden = !text;
+  }
+
   function renderIdeen() {
     var list = document.getElementById('ideas-list');
     list.querySelectorAll('.own-idea').forEach(function (li) { li.remove(); });
@@ -749,15 +851,52 @@
   }
   renderIdeen();
 
+  // Vom Vorstand freigegebene Ideen aus der Datenbank nachladen (fuer alle sichtbar)
+  function ladeFreigegebeneIdeen() {
+    if (!SB_ON) { return; }
+    sbSelect('ideen', 'select=text&status=eq.approved&order=created_at.desc&limit=50').then(function (rows) {
+      var list = document.getElementById('ideas-list');
+      list.querySelectorAll('.db-idea').forEach(function (li) { li.remove(); });
+      var anchor = list.querySelector('.own-idea');
+      rows.forEach(function (row) {
+        var li = document.createElement('li');
+        li.className = 'db-idea';
+        li.innerHTML = '<span class="idea-text">' + esc(row.text) + '</span><span class="pill pill--ok label">Vorgemerkt f&uuml;r 2027</span>';
+        if (anchor) { list.insertBefore(li, anchor); } else { list.appendChild(li); }
+      });
+    });
+  }
+  ladeFreigegebeneIdeen();
+
   document.getElementById('idea-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var input = document.getElementById('idea-input');
     var text = input.value.trim();
     if (!text) { return; }
-    eigeneIdeen.push(text);
-    save('kfu-ideen', eigeneIdeen);
-    renderIdeen();
-    input.value = '';
+    var btn = this.querySelector('button');
+
+    function merkeLokal() {
+      eigeneIdeen.push(text);
+      save('kfu-ideen', eigeneIdeen);
+      renderIdeen();
+      input.value = '';
+    }
+
+    if (!SB_ON) {
+      merkeLokal();
+      setIdeaStatus('Auf diesem Gerät gemerkt. (Zentraler Speicher ist noch nicht scharfgeschaltet.)', false);
+      return;
+    }
+
+    btn.disabled = true;
+    setIdeaStatus('Wird gespeichert …', false);
+    sbInsert('ideen', { text: text }).then(function () {
+      merkeLokal();
+      setIdeaStatus('Idee im offiziellen Speicher — der Vorstand sichtet sie. Danke!', false);
+    }).catch(function () {
+      merkeLokal();
+      setIdeaStatus('Netz gerade zickig — die Idee ist erstmal auf diesem Gerät gemerkt.', true);
+    }).then(function () { btn.disabled = false; });
   });
 
   document.getElementById('ideas-list').addEventListener('click', function (e) {
@@ -767,6 +906,47 @@
     save('kfu-ideen', eigeneIdeen);
     renderIdeen();
   });
+
+  // --- Anwaerter-Formular ---
+  var awForm = document.getElementById('anwaerter-form');
+  if (awForm) {
+    var awStatus = document.getElementById('anwaerter-status');
+    function setAwStatus(text, warn) {
+      awStatus.textContent = text;
+      awStatus.className = warn ? 'form-note form-note--warn' : 'form-note';
+    }
+    awForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      // Honeypot: von Bots ausgefuellt -> still verwerfen
+      if (document.getElementById('aw-hp').value) { return; }
+      var name = document.getElementById('aw-name').value.trim();
+      var kontakt = document.getElementById('aw-kontakt').value.trim();
+      var motivation = document.getElementById('aw-motivation').value.trim();
+      if (!name || !kontakt || !motivation) {
+        setAwStatus('Bitte Name, Kontakt und Motivation ausfüllen.', true);
+        return;
+      }
+      if (!SB_ON) {
+        setAwStatus('Zentraler Speicher ist noch nicht scharfgeschaltet — bitte später nochmal. (Setup: SUPABASE_SETUP.md)', true);
+        return;
+      }
+      var btn = awForm.querySelector('button');
+      btn.disabled = true;
+      setAwStatus('Bewerbung wird übermittelt …', false);
+      sbInsert('anwaerter', {
+        name: name,
+        kontakt: kontakt,
+        ort: document.getElementById('aw-ort').value.trim(),
+        motivation: motivation,
+        wetttrinken: document.getElementById('aw-wett').value
+      }).then(function () {
+        awForm.reset();
+        setAwStatus('Bewerbung ist beim Vorstand eingegangen. Ehrenwort auf sorgfältige Sichtung. 🐊', false);
+      }).catch(function () {
+        setAwStatus('Hat nicht geklappt — bitte später nochmal versuchen.', true);
+      }).then(function () { btn.disabled = false; });
+    });
+  }
 </script>
 
 </body>

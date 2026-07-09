@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitgliederbereich — Kinderfest Isny Ultras</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
+</head>
+<body>
+<style>
+  :root {
+    --cream: #F1EBDB;
+    --paper: #FAF6EA;
+    --ink: #1A1613;
+    --hop: #3A5222;
+    --hop-deep: #2C3F1A;
+    --crown: #C9971F;
+    --edge: #DCD2BA;
+    --stamp: #9C3B26;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--cream); color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.6;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 28px 18px 80px; }
+  .display { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .label { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; font-size: .74rem; }
+  a { color: var(--hop); }
+
+  .top { display: flex; align-items: center; gap: 14px; border-bottom: 2px dashed var(--hop); padding-bottom: 18px; margin-bottom: 26px; }
+  .top img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; }
+  .top h1 { font-size: 1.35rem; margin: 0; }
+  .top .eyebrow { color: var(--hop); margin: 0 0 2px; }
+
+  .card { background: var(--paper); border: 1px solid var(--edge); outline: 2px dashed var(--hop); outline-offset: -8px; border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { color: var(--hop); }
+  input {
+    font-family: Georgia, serif; font-size: 1rem; color: var(--ink);
+    background: var(--cream); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 14px; width: 100%;
+  }
+  input:focus-visible { outline: 2px dashed var(--hop); outline-offset: 2px; }
+
+  .btn {
+    font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .12em; font-size: .78rem; background: var(--hop); color: var(--cream);
+    border: none; border-radius: 10px; padding: 9px 16px; cursor: pointer;
+  }
+  .btn:hover { background: var(--hop-deep); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn--ghost { background: transparent; color: var(--hop); border: 1px dashed var(--hop); }
+  .btn--ghost:hover { background: rgba(58,82,34,.08); }
+  .btn--danger { background: transparent; color: var(--stamp); border: 1px dashed var(--stamp); }
+  .btn--danger:hover { background: rgba(156,59,38,.1); }
+  .btn--sm { padding: 5px 11px; font-size: .7rem; }
+
+  .note { font-size: .85rem; color: rgba(26,22,19,.65); margin: 10px 0 0; }
+  .note--warn { color: var(--stamp); }
+  .note--ok { color: var(--hop); }
+
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  .toolbar .who { font-size: .9rem; color: rgba(26,22,19,.7); }
+
+  .panel-head { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 14px; }
+  .panel-head h2 { font-size: 1.15rem; margin: 0; }
+  .panel-head .count { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; color: var(--hop); background: rgba(58,82,34,.1); border-radius: 999px; padding: 2px 10px; font-size: .78rem; }
+
+  .badge { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .badge--neu { background: transparent; color: var(--crown); border: 1px dashed var(--crown); }
+  .badge--approved, .badge--angenommen { background: var(--hop); color: var(--cream); }
+  .badge--abgelehnt { background: transparent; color: var(--stamp); border: 1px dashed var(--stamp); }
+
+  .aw { border: 1px solid var(--edge); border-radius: 12px; padding: 16px; margin-bottom: 12px; background: var(--cream); }
+  .aw-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .aw-head .name { font-weight: 700; font-size: 1.05rem; }
+  .aw-head .when { font-size: .78rem; color: rgba(26,22,19,.55); margin-left: auto; }
+  .aw dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 12px 0 0; font-size: .93rem; }
+  .aw dt { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; color: var(--hop); padding-top: 3px; }
+  .aw dd { margin: 0; }
+  .aw dd.motiv { white-space: pre-wrap; }
+  .aw-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+  .idea { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid var(--edge); border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; background: var(--cream); }
+  .idea .txt { flex: 1 1 12ch; }
+  .idea .when { font-size: .76rem; color: rgba(26,22,19,.55); }
+  .idea-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .empty { color: rgba(26,22,19,.55); font-style: italic; padding: 6px 2px; }
+  .footer-link { margin-top: 40px; font-size: .82rem; }
+
+  @media (max-width: 520px) {
+    .aw dl { grid-template-columns: 1fr; gap: 2px 0; }
+    .aw dt { padding-top: 8px; }
+  }
+</style>
+
+<main>
+  <div class="top">
+    <img src="logo.jpeg" alt="Vereinswappen">
+    <div>
+      <p class="eyebrow label">Kinderfest Isny Ultras</p>
+      <h1 class="display">Mitgliederbereich</h1>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <section id="login-view" class="card" hidden>
+    <p class="label" style="color: var(--hop); margin: 0 0 14px;">Anmeldung Vorstand</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="li-email">E-Mail</label>
+        <input id="li-email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="li-pass">Passwort</label>
+        <input id="li-pass" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit">Anmelden</button>
+    </form>
+    <p class="note" id="login-status" hidden></p>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dash-view" hidden>
+    <div class="toolbar">
+      <span class="who" id="who"></span>
+      <button class="btn btn--ghost btn--sm" id="logout-btn" type="button">Abmelden</button>
+    </div>
+
+    <div class="panel-head">
+      <h2 class="display">Anwärter</h2>
+      <span class="count" id="aw-count">–</span>
+      <button class="btn btn--ghost btn--sm" id="aw-reload" type="button" style="margin-left:auto;">Aktualisieren</button>
+    </div>
+    <div id="aw-list"><p class="empty">Lade …</p></div>
+
+    <div class="panel-head">
+      <h2 class="display">Ideenspeicher</h2>
+      <span class="count" id="idea-count">–</span>
+      <button class="btn btn--ghost btn--sm" id="idea-reload" type="button" style="margin-left:auto;">Aktualisieren</button>
+    </div>
+    <p class="note">„Freigeben" macht eine Idee öffentlich auf der Startseite sichtbar. Nur hier im Mitgliederbereich lässt sich etwas löschen.</p>
+    <div id="idea-list"><p class="empty">Lade …</p></div>
+  </section>
+
+  <p class="footer-link"><a href="index.html">← Zurück zur öffentlichen Seite</a></p>
+</main>
+
+<script>
+  var SUPABASE_URL = 'https://mqqjtjbfywwwiansqmbh.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_KGN_zLdcHZBHCA6KMvtb4Q_0Xmq0oDy';
+  var REST = SUPABASE_URL + '/rest/v1';
+  var AUTH = SUPABASE_URL + '/auth/v1';
+
+  var session = null;
+  try { session = JSON.parse(localStorage.getItem('kfu-session')) || null; } catch (e) { session = null; }
+
+  function esc(s) { var d = document.createElement('div'); d.textContent = (s == null ? '' : s); return d.innerHTML; }
+  function el(id) { return document.getElementById(id); }
+  function fmtDate(s) {
+    if (!s) { return ''; }
+    var d = new Date(s);
+    return d.toLocaleDateString('de-DE') + ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function saveSession(s) { session = s; localStorage.setItem('kfu-session', JSON.stringify(s)); }
+  function clearSession() { session = null; localStorage.removeItem('kfu-session'); }
+
+  // ---- Auth ----
+  function login(email, password) {
+    return fetch(AUTH + '/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    }).then(function (r) {
+      return r.json().then(function (data) {
+        if (!r.ok) { throw new Error(data.error_description || data.msg || data.error || 'Anmeldung fehlgeschlagen'); }
+        saveSession(data);
+        return data;
+      });
+    });
+  }
+
+  function refreshSession() {
+    if (!session || !session.refresh_token) { return Promise.reject(new Error('keine Sitzung')); }
+    return fetch(AUTH + '/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: session.refresh_token })
+    }).then(function (r) {
+      if (!r.ok) { throw new Error('Sitzung abgelaufen'); }
+      return r.json().then(function (data) { saveSession(data); return data; });
+    });
+  }
+
+  function logout() {
+    var t = session && session.access_token;
+    clearSession();
+    showLogin();
+    if (t) {
+      fetch(AUTH + '/logout', { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + t } }).catch(function () {});
+    }
+  }
+
+  // ---- REST mit Auto-Refresh bei 401 ----
+  function authHeaders(extra) {
+    var h = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + (session ? session.access_token : '') };
+    if (extra) { for (var k in extra) { h[k] = extra[k]; } }
+    return h;
+  }
+
+  function api(method, path, body, _retried) {
+    var opts = { method: method, headers: authHeaders(body ? { 'Content-Type': 'application/json' } : null) };
+    if (method === 'PATCH' || method === 'DELETE') { opts.headers['Prefer'] = 'return=minimal'; }
+    if (body) { opts.body = JSON.stringify(body); }
+    return fetch(REST + '/' + path, opts).then(function (r) {
+      if (r.status === 401 && !_retried) {
+        return refreshSession().then(function () { return api(method, path, body, true); });
+      }
+      if (!r.ok) { return r.text().then(function (t) { throw new Error(t || ('HTTP ' + r.status)); }); }
+      if (method === 'GET') { return r.json(); }
+      return true;
+    });
+  }
+
+  function checkVorstand() {
+    return fetch(REST + '/rpc/is_vorstand', {
+      method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: '{}'
+    }).then(function (r) { return r.ok ? r.json() : false; }).catch(function () { return false; });
+  }
+
+  // ---- Views ----
+  function showLogin() { el('login-view').hidden = false; el('dash-view').hidden = true; }
+  function showDash() {
+    el('login-view').hidden = true; el('dash-view').hidden = false;
+    var email = session && session.user && session.user.email ? session.user.email : '';
+    el('who').textContent = email ? ('Angemeldet als ' + email) : 'Angemeldet';
+    loadAnwaerter();
+    loadIdeen();
+  }
+
+  function setLoginStatus(text, warn) {
+    var e = el('login-status');
+    e.textContent = text || ''; e.hidden = !text;
+    e.className = 'note' + (warn ? ' note--warn' : '');
+  }
+
+  // ---- Anwärter ----
+  function loadAnwaerter() {
+    var box = el('aw-list');
+    api('GET', 'anwaerter?select=*&order=created_at.desc').then(function (rows) {
+      el('aw-count').textContent = rows.length;
+      if (!rows.length) { box.innerHTML = '<p class="empty">Noch keine Bewerbungen.</p>'; return; }
+      box.innerHTML = '';
+      rows.forEach(function (r) { box.appendChild(renderAnwaerter(r)); });
+    }).catch(function (err) { box.innerHTML = '<p class="note note--warn">Konnte Bewerbungen nicht laden: ' + esc(err.message) + '</p>'; });
+  }
+
+  function renderAnwaerter(r) {
+    var div = document.createElement('div');
+    div.className = 'aw';
+    var st = r.status || 'neu';
+    div.innerHTML =
+      '<div class="aw-head">' +
+        '<span class="name">' + esc(r.name) + '</span>' +
+        '<span class="badge badge--' + esc(st) + '">' + esc(st) + '</span>' +
+        '<span class="when">' + esc(fmtDate(r.created_at)) + '</span>' +
+      '</div>' +
+      '<dl>' +
+        '<dt>Kontakt</dt><dd>' + esc(r.kontakt) + '</dd>' +
+        (r.ort ? '<dt>Ort/Bezug</dt><dd>' + esc(r.ort) + '</dd>' : '') +
+        '<dt>Wetttrinken</dt><dd>' + esc(r.wetttrinken || '–') + '</dd>' +
+        '<dt>Motivation</dt><dd class="motiv">' + esc(r.motivation) + '</dd>' +
+      '</dl>' +
+      '<div class="aw-actions">' +
+        '<button class="btn btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="angenommen">Angenommen</button>' +
+        '<button class="btn btn--ghost btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="abgelehnt">Abgelehnt</button>' +
+        '<button class="btn btn--ghost btn--sm" data-act="aw-status" data-id="' + r.id + '" data-val="neu">Zurück auf „neu"</button>' +
+        '<button class="btn btn--danger btn--sm" data-act="aw-del" data-id="' + r.id + '" data-name="' + esc(r.name) + '">Löschen</button>' +
+      '</div>';
+    return div;
+  }
+
+  // ---- Ideen ----
+  function loadIdeen() {
+    var box = el('idea-list');
+    api('GET', 'ideen?select=*&order=created_at.desc').then(function (rows) {
+      el('idea-count').textContent = rows.length;
+      if (!rows.length) { box.innerHTML = '<p class="empty">Noch keine Ideen.</p>'; return; }
+      box.innerHTML = '';
+      rows.forEach(function (r) { box.appendChild(renderIdee(r)); });
+    }).catch(function (err) { box.innerHTML = '<p class="note note--warn">Konnte Ideen nicht laden: ' + esc(err.message) + '</p>'; });
+  }
+
+  function renderIdee(r) {
+    var div = document.createElement('div');
+    div.className = 'idea';
+    var st = r.status || 'neu';
+    var actions = '';
+    if (st !== 'approved') { actions += '<button class="btn btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="approved">Freigeben</button>'; }
+    if (st !== 'abgelehnt') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="abgelehnt">Ablehnen</button>'; }
+    if (st !== 'neu') { actions += '<button class="btn btn--ghost btn--sm" data-act="idea-status" data-id="' + r.id + '" data-val="neu">Auf „neu"</button>'; }
+    actions += '<button class="btn btn--danger btn--sm" data-act="idea-del" data-id="' + r.id + '">Löschen</button>';
+    div.innerHTML =
+      '<span class="txt">' + esc(r.text) + '</span>' +
+      '<span class="badge badge--' + esc(st) + '">' + esc(st) + '</span>' +
+      '<span class="when">' + esc(fmtDate(r.created_at)) + '</span>' +
+      '<span class="idea-actions">' + actions + '</span>';
+    return div;
+  }
+
+  // ---- Aktionen (Event-Delegation) ----
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!b) { return; }
+    var id = b.getAttribute('data-id');
+    var act = b.getAttribute('data-act');
+
+    if (act === 'aw-status') {
+      api('PATCH', 'anwaerter?id=eq.' + id, { status: b.getAttribute('data-val') }).then(loadAnwaerter).catch(alertErr);
+    } else if (act === 'aw-del') {
+      if (confirm('Bewerbung von „' + b.getAttribute('data-name') + '" wirklich löschen?')) {
+        api('DELETE', 'anwaerter?id=eq.' + id).then(loadAnwaerter).catch(alertErr);
+      }
+    } else if (act === 'idea-status') {
+      api('PATCH', 'ideen?id=eq.' + id, { status: b.getAttribute('data-val') }).then(loadIdeen).catch(alertErr);
+    } else if (act === 'idea-del') {
+      if (confirm('Diese Idee wirklich löschen?')) {
+        api('DELETE', 'ideen?id=eq.' + id).then(loadIdeen).catch(alertErr);
+      }
+    }
+  });
+
+  function alertErr(err) { alert('Aktion fehlgeschlagen: ' + err.message); }
+
+  // ---- Login-Form ----
+  el('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = this.querySelector('button');
+    var email = el('li-email').value.trim();
+    var pass = el('li-pass').value;
+    btn.disabled = true;
+    setLoginStatus('Prüfe Anmeldung …', false);
+    login(email, pass).then(function () {
+      return checkVorstand();
+    }).then(function (ok) {
+      if (!ok) {
+        setLoginStatus('Angemeldet, aber diese Adresse ist nicht als Vorstand hinterlegt. Kein Zugriff.', true);
+        clearSession();
+        return;
+      }
+      setLoginStatus('', false);
+      el('li-pass').value = '';
+      showDash();
+    }).catch(function (err) {
+      setLoginStatus(err.message, true);
+    }).then(function () { btn.disabled = false; });
+  });
+
+  el('logout-btn').addEventListener('click', logout);
+  el('aw-reload').addEventListener('click', loadAnwaerter);
+  el('idea-reload').addEventListener('click', loadIdeen);
+
+  // ---- Start: bestehende Sitzung prüfen ----
+  if (session && session.access_token) {
+    checkVorstand().then(function (ok) {
+      if (ok) { showDash(); }
+      else { return refreshSession().then(checkVorstand).then(function (ok2) { if (ok2) { showDash(); } else { clearSession(); showLogin(); } }); }
+    }).catch(function () { clearSession(); showLogin(); });
+  } else {
+    showLogin();
+  }
+</script>
+</body>
+</html>

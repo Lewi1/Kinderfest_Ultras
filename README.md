@@ -2,7 +2,7 @@
 
 Offizielle Vereins-Website der **Kinderfest Isny Ultras** — est. 2026, 13 Mitglieder, ausverkauft.
 
-**Live:** https://lewi1.github.io/Kinderfest_Ultras/
+**Live:** https://kinderfestultras.de/ (Fallback: https://lewi1.github.io/Kinderfest_Ultras/)
 
 ## Inhalt
 

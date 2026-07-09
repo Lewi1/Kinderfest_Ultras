@@ -548,7 +548,7 @@
         <input id="ch-name" type="text" maxlength="40" placeholder="Dein Name" autocomplete="name" required>
         <button class="btn" type="submit">Duell buchen</button>
       </form>
-      <p class="form-note" id="booking-hint">Wunschtermin antippen, Namen eintragen, buchen. Der Vorstand hat aktuell noch alles frei. Gebucht wird auf diesem Ger&auml;t &mdash; offiziell wird&rsquo;s per Handschlag am Pavillon.</p>
+      <p class="form-note" id="booking-hint">Wunschtermin antippen, Namen eintragen, buchen. Der Vorstand hat aktuell noch alles frei. Gebuchte Termine sind f&uuml;r alle sichtbar &mdash; offiziell wird&rsquo;s per Handschlag am Pavillon.</p>
     </div>
   </section>
 
@@ -739,7 +739,7 @@
   function save(key, list) { try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {} }
   function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-  var challengers = load('kfu-herausforderer');
+  var challengers = [];
   function renderChallengers() {
     var tbody = document.getElementById('scoreboard-body');
     tbody.querySelectorAll('.challenger').forEach(function (r) { r.remove(); });
@@ -808,6 +808,19 @@
   }
   renderSlots();
 
+  // Wetttrinken-Buchungen zentral aus der Datenbank laden (fuer alle sichtbar); sonst lokal.
+  function ladeChallengers() {
+    if (!SB_ON) { challengers = load('kfu-herausforderer'); renderChallengers(); renderSlots(); return; }
+    sbSelect('wetttrinken', 'select=name,slot,created_at&order=created_at.asc').then(function (rows) {
+      challengers = rows.map(function (r) {
+        return { name: r.name, slot: r.slot, datum: r.created_at ? new Date(r.created_at).toLocaleDateString('de-DE') : '' };
+      });
+      renderChallengers();
+      renderSlots();
+    });
+  }
+  ladeChallengers();
+
   document.getElementById('challenge-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var input = document.getElementById('ch-name');
@@ -818,13 +831,33 @@
       return;
     }
     var gebucht = slotWahl;
-    challengers.push({ name: name, datum: new Date().toLocaleDateString('de-DE'), slot: gebucht });
-    save('kfu-herausforderer', challengers);
-    slotWahl = null;
-    renderChallengers();
-    renderSlots();
-    setHint('Duell gebucht: ' + gebucht + '. Der Vorstand freut sich. Wahrscheinlich.', false);
-    input.value = '';
+    var btn = this.querySelector('button');
+
+    if (!SB_ON) {
+      challengers.push({ name: name, datum: new Date().toLocaleDateString('de-DE'), slot: gebucht });
+      save('kfu-herausforderer', challengers);
+      slotWahl = null; renderChallengers(); renderSlots();
+      setHint('Duell gebucht: ' + gebucht + '. (Nur auf diesem Gerät — zentraler Speicher ist aus.)', false);
+      input.value = '';
+      return;
+    }
+
+    btn.disabled = true;
+    setHint('Termin wird gebucht …', false);
+    sbInsert('wetttrinken', { name: name, slot: gebucht }).then(function () {
+      slotWahl = null;
+      input.value = '';
+      setHint('Duell gebucht: ' + gebucht + '. Der Vorstand freut sich. Wahrscheinlich.', false);
+      ladeChallengers();
+    }).catch(function (err) {
+      var msg = (err && err.message) || '';
+      if (msg.indexOf('23505') !== -1 || msg.indexOf('duplicate') !== -1 || msg.indexOf('unique') !== -1) {
+        setHint('Schade — dieser Termin wurde dir gerade weggeschnappt. Bitte einen anderen wählen.', true);
+      } else {
+        setHint('Buchung hat gerade nicht geklappt — bitte nochmal versuchen.', true);
+      }
+      ladeChallengers();
+    }).then(function () { btn.disabled = false; });
   });
 
   // Eigene Einreichungen bleiben lokal gemerkt (als "Eingereicht"), zusaetzlich

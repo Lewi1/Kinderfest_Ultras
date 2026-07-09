@@ -144,6 +144,14 @@
     </div>
     <p class="note">„Freigeben" macht eine Idee öffentlich auf der Startseite sichtbar. Nur hier im Mitgliederbereich lässt sich etwas löschen.</p>
     <div id="idea-list"><p class="empty">Lade …</p></div>
+
+    <div class="panel-head">
+      <h2 class="display">Wetttrinken-Termine</h2>
+      <span class="count" id="wett-count">–</span>
+      <button class="btn btn--ghost btn--sm" id="wett-reload" type="button" style="margin-left:auto;">Aktualisieren</button>
+    </div>
+    <p class="note">Gebuchte Duell-Termine. „Löschen" sagt den Termin ab und gibt den Slot wieder frei.</p>
+    <div id="wett-list"><p class="empty">Lade …</p></div>
   </section>
 
   <p class="footer-link"><a href="index.html">← Zurück zur öffentlichen Seite</a></p>
@@ -240,6 +248,7 @@
     el('who').textContent = email ? ('Angemeldet als ' + email) : 'Angemeldet';
     loadAnwaerter();
     loadIdeen();
+    loadWetttrinken();
   }
 
   function setLoginStatus(text, warn) {
@@ -312,6 +321,29 @@
     return div;
   }
 
+  // ---- Wetttrinken-Termine ----
+  function loadWetttrinken() {
+    var box = el('wett-list');
+    api('GET', 'wetttrinken?select=*&order=created_at.asc').then(function (rows) {
+      el('wett-count').textContent = rows.length;
+      if (!rows.length) { box.innerHTML = '<p class="empty">Noch keine Termine gebucht.</p>'; return; }
+      box.innerHTML = '';
+      rows.forEach(function (r) { box.appendChild(renderWett(r)); });
+    }).catch(function (err) { box.innerHTML = '<p class="note note--warn">Konnte Termine nicht laden: ' + esc(err.message) + '</p>'; });
+  }
+
+  function renderWett(r) {
+    var div = document.createElement('div');
+    div.className = 'idea';
+    div.innerHTML =
+      '<span class="txt"><strong>' + esc(r.name) + '</strong> — ' + esc(r.slot) + '</span>' +
+      '<span class="when">' + esc(fmtDate(r.created_at)) + '</span>' +
+      '<span class="idea-actions">' +
+        '<button class="btn btn--danger btn--sm" data-act="wett-del" data-id="' + r.id + '" data-slot="' + esc(r.slot) + '" data-name="' + esc(r.name) + '">Löschen</button>' +
+      '</span>';
+    return div;
+  }
+
   // ---- Aktionen (Event-Delegation) ----
   document.addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('[data-act]') : null;
@@ -330,6 +362,10 @@
     } else if (act === 'idea-del') {
       if (confirm('Diese Idee wirklich löschen?')) {
         api('DELETE', 'ideen?id=eq.' + id).then(loadIdeen).catch(alertErr);
+      }
+    } else if (act === 'wett-del') {
+      if (confirm('Termin „' + b.getAttribute('data-slot') + '" von „' + b.getAttribute('data-name') + '" absagen?')) {
+        api('DELETE', 'wetttrinken?id=eq.' + id).then(loadWetttrinken).catch(alertErr);
       }
     }
   });
@@ -363,6 +399,7 @@
   el('logout-btn').addEventListener('click', logout);
   el('aw-reload').addEventListener('click', loadAnwaerter);
   el('idea-reload').addEventListener('click', loadIdeen);
+  el('wett-reload').addEventListener('click', loadWetttrinken);
 
   // ---- Start: bestehende Sitzung prüfen ----
   if (session && session.access_token) {

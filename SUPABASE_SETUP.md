@@ -176,6 +176,46 @@ bekommt „Kein Zugriff".
 
 ---
 
+## 6. Wetttrinken-Termine in der Datenbank
+
+Damit gebuchte Duell-Termine **für alle** sichtbar sind (nicht nur pro Gerät) und
+kein Termin doppelt vergeben wird. SQL Editor → Run:
+
+```sql
+-- ============ Tabelle: Wetttrinken-Termine ============
+create table if not exists public.wetttrinken (
+  id         bigint generated always as identity primary key,
+  name       text not null check (char_length(name) between 2 and 40),
+  slot       text not null unique check (char_length(slot) between 3 and 60),
+  created_at timestamptz not null default now()
+);
+
+alter table public.wetttrinken enable row level security;
+grant insert, select on public.wetttrinken to anon;
+grant select, delete on public.wetttrinken to authenticated;
+
+-- Jeder darf einen freien Termin buchen (slot ist UNIQUE -> doppelt geht nicht)
+create policy "wett_insert_anon" on public.wetttrinken
+  for insert to anon
+  with check (char_length(name) between 2 and 40 and char_length(slot) between 3 and 60);
+
+-- Scoreboard/Belegung ist oeffentlich lesbar
+create policy "wett_select_anon" on public.wetttrinken
+  for select to anon using (true);
+
+-- Vorstand darf Termine sehen & loeschen (Duell absagen -> Slot wird wieder frei)
+create policy "wett_select_vorstand" on public.wetttrinken
+  for select to authenticated using (public.is_vorstand());
+create policy "wett_delete_vorstand" on public.wetttrinken
+  for delete to authenticated using (public.is_vorstand());
+```
+
+Danach ist die Terminbuchung auf der Startseite zentral: gebuchte Slots sind sofort
+bei allen als „belegt" durchgestrichen, und im Mitgliederbereich (`intern.html`)
+kann der Vorstand Termine absagen.
+
+---
+
 ## Optional: Spam-Bremse
 
 ## Optional: Spam-Bremse

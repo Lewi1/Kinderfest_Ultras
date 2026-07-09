@@ -345,6 +345,25 @@
   .btn:hover { background: var(--hop-deep); }
   .btn:focus-visible { outline: 3px solid var(--crown); outline-offset: 2px; }
   .form-note { text-align: center; font-size: .85rem; color: rgba(26,22,19,.65); margin: 12px auto 0; max-width: 48ch; }
+  .form-note--warn { color: var(--stamp); }
+
+  .booking { margin-top: 32px; }
+  .booking-title { text-align: center; color: var(--hop); margin: 0; }
+  .slot-day { margin-top: 18px; }
+  .slot-day-title { text-align: center; color: rgba(26,22,19,.7); margin: 0 0 10px; letter-spacing: .14em; }
+  .slot-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .slot {
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    font-weight: 700; font-size: .88rem; letter-spacing: .06em;
+    font-variant-numeric: tabular-nums;
+    background: var(--cream); color: var(--ink);
+    border: 1px dashed var(--hop); border-radius: 8px;
+    padding: 8px 14px; cursor: pointer;
+  }
+  .slot[aria-pressed="true"] { background: var(--hop); color: var(--cream); border-style: solid; }
+  .slot:disabled { border: 1px dashed var(--edge); color: rgba(26,22,19,.35); background: transparent; cursor: not-allowed; text-decoration: line-through; }
+  .slot:not(:disabled):hover { border-style: solid; }
+  .slot:focus-visible { outline: 2px dashed var(--hop); outline-offset: 2px; }
 
   /* ---------- Ideenspeicher ---------- */
   .ideas { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -413,11 +432,11 @@
 <div class="ticker" aria-label="Vereinsnachrichten">
   <div class="ticker__track" id="ticker-track">
     <span class="label">+++ Mitgliederstopp: alle 13 Pl&auml;tze vergeben +++</span>
-    <span class="label">Neuzugang: Adi folgt der allerletzten exklusiven Einladung +++</span>
     <span class="label">Nachwuchsf&ouml;rderung: Lio verst&auml;rkt die Kurve +++</span>
     <span class="label">150 Bierdeckel mit Vereinslogo eingetroffen +++</span>
     <span class="label">Plakettenausgabe: Freitag ab 15:30 Uhr am Pavillon +++</span>
     <span class="label">Beitritt 2027: nur exklusiv im Wetttrinken gegen den Vorstand +++</span>
+    <span class="label">Terminbuchung f&uuml;rs Wetttrinken er&ouml;ffnet &mdash; noch alles frei +++</span>
     <span class="label">Ideenspeicher 2027 ist er&ouml;ffnet &mdash; Vorschl&auml;ge jederzeit +++</span>
   </div>
 </div>
@@ -469,7 +488,7 @@
         <span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette"></span><span class="plakette plakette--nachwuchs" title="Nachwuchsplakette"></span>
       </div>
       <span class="stamp display">Ausverkauft</span>
-      <p class="fine">Die Mitgliedschaft gab es exklusiv mit der Sonderplakette 2026 &mdash; und die war schneller weg als die Bratwurst am Festsonntag. Danach wurde genau zweimal sehr exklusiv erweitert: Adi folgte der allerletzten Einladung des Vorstands, und Lio ist per Nachwuchsf&ouml;rderung dabei &mdash; Sonderplakette vom Papa. Jetzt aber wirklich: dicht. Beschluss des Vorstands: Der Beitritt 2027 wird ausschlie&szlig;lich <a href="#wetttrinken">im Wetttrinken geregelt</a>.</p>
+      <p class="fine">Die Mitgliedschaft gab es exklusiv mit der Sonderplakette 2026 &mdash; und die war schneller weg als die Bratwurst am Festsonntag. J&uuml;ngster Neuzugang: Lio, per Nachwuchsf&ouml;rderung &mdash; Sonderplakette vom Papa. Jetzt aber wirklich: dicht. Beschluss des Vorstands: Der Beitritt 2027 wird ausschlie&szlig;lich <a href="#wetttrinken">im Wetttrinken geregelt</a>.</p>
     </div>
   </section>
 
@@ -481,9 +500,9 @@
     </div>
     <div class="patch-card">
       <ol class="rules">
-        <li><span class="para">&sect;&thinsp;1</span>Der Beitritt 2027 erfolgt ausschlie&szlig;lich und exklusiv im Wetttrinken gegen den Vorstand (Philip R.). Beschlossen am 09.07.2026 &mdash; einstimmig, vom Vorstand. Die allerletzte exklusive Einladung ging an Adi und ist damit aufgebraucht.</li>
-        <li><span class="para">&sect;&thinsp;2</span>Austragungsort: Kinderfest-Pavillon. Termin: nach Vereinbarung. W&uuml;rde: optional.</li>
-        <li><span class="para">&sect;&thinsp;3</span>Das Getr&auml;nk bestimmt der Titelverteidiger. Radler z&auml;hlt nach Vereinsbeschluss nur halb, alkoholfrei ist ausdr&uuml;cklich erlaubt &mdash; kostet aber einen Kommentar.</li>
+        <li><span class="para">&sect;&thinsp;1</span>Der Beitritt 2027 erfolgt ausschlie&szlig;lich und exklusiv im Wetttrinken gegen den Vorstand (Philip R.). Beschlossen am 09.07.2026 &mdash; einstimmig, vom Vorstand.</li>
+        <li><span class="para">&sect;&thinsp;2</span>Austragungsort: Kinderfest-Pavillon. Termin: nur w&auml;hrend der Festzeit &mdash; Wunschtermin unten buchen. W&uuml;rde: optional.</li>
+        <li><span class="para">&sect;&thinsp;3</span>Was getrunken wird, entscheidet der Vorstand. Alkoholfrei und Radler z&auml;hlen nicht.</li>
         <li><span class="para">&sect;&thinsp;4</span>Der Vorstand ist ungeschlagen. Der Vorstand hat allerdings auch noch nie angetreten.</li>
       </ol>
       <div class="scoreboard-wrap">
@@ -496,12 +515,16 @@
           </tbody>
         </table>
       </div>
+      <div class="booking">
+        <p class="booking-title label">Terminbuchung &mdash; nur w&auml;hrend der Festzeit</p>
+        <div id="slot-days"></div>
+      </div>
       <form class="challenge-form" id="challenge-form">
         <label class="label vh" for="ch-name">Dein Name</label>
         <input id="ch-name" type="text" maxlength="40" placeholder="Dein Name" autocomplete="name" required>
-        <button class="btn" type="submit">Herausforderung einreichen</button>
+        <button class="btn" type="submit">Duell buchen</button>
       </form>
-      <p class="form-note">Die Herausforderung landet im Scoreboard auf diesem Ger&auml;t. Offiziell wird&rsquo;s erst per Handschlag am Pavillon &mdash; Philip wei&szlig; bis dahin von nichts.</p>
+      <p class="form-note" id="booking-hint">Wunschtermin antippen, Namen eintragen, buchen. Der Vorstand hat aktuell noch alles frei. Gebucht wird auf diesem Ger&auml;t &mdash; offiziell wird&rsquo;s per Handschlag am Pavillon.</p>
     </div>
   </section>
 
@@ -621,22 +644,86 @@
     var tbody = document.getElementById('scoreboard-body');
     tbody.querySelectorAll('.challenger').forEach(function (r) { r.remove(); });
     challengers.forEach(function (c, i) {
+      var status = c.slot
+        ? 'Duell terminiert: ' + esc(c.slot)
+        : 'Herausforderung ausstehend (seit ' + esc(c.datum) + ')';
       var tr = document.createElement('tr');
       tr.className = 'challenger';
-      tr.innerHTML = '<td>' + (i + 2) + '</td><td>' + esc(c.name) + '</td><td class="num">0</td><td class="num">0</td><td>Herausforderung ausstehend (seit ' + esc(c.datum) + ')</td>';
+      tr.innerHTML = '<td>' + (i + 2) + '</td><td>' + esc(c.name) + '</td><td class="num">0</td><td class="num">0</td><td>' + status + '</td>';
       tbody.appendChild(tr);
     });
   }
   renderChallengers();
+
+  // Festzeit hier anpassen (Tage & Uhrzeiten):
+  var FESTZEIT = [
+    { tag: 'Freitag, 10.07.', zeiten: ['16:00', '17:00', '18:00', '19:00', '20:00'] },
+    { tag: 'Samstag, 11.07.', zeiten: ['11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'] }
+  ];
+  var slotWahl = null;
+  var hint = document.getElementById('booking-hint');
+  var hintStandard = hint.textContent;
+
+  function setHint(text, warn) {
+    hint.textContent = text;
+    hint.className = warn ? 'form-note form-note--warn' : 'form-note';
+  }
+
+  function renderSlots() {
+    var belegt = {};
+    challengers.forEach(function (c) { if (c.slot) { belegt[c.slot] = true; } });
+    var wrap = document.getElementById('slot-days');
+    wrap.innerHTML = '';
+    FESTZEIT.forEach(function (d) {
+      var day = document.createElement('div');
+      day.className = 'slot-day';
+      var title = document.createElement('p');
+      title.className = 'label slot-day-title';
+      title.textContent = d.tag;
+      day.appendChild(title);
+      var grid = document.createElement('div');
+      grid.className = 'slot-grid';
+      d.zeiten.forEach(function (z) {
+        var key = d.tag + ', ' + z + ' Uhr';
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'slot';
+        b.textContent = z;
+        if (belegt[key]) {
+          b.disabled = true;
+          b.title = 'Belegt';
+        } else {
+          b.setAttribute('aria-pressed', slotWahl === key ? 'true' : 'false');
+          b.addEventListener('click', function () {
+            slotWahl = (slotWahl === key) ? null : key;
+            setHint(slotWahl ? 'Gewählt: ' + slotWahl + ' — jetzt Namen eintragen und buchen.' : hintStandard, false);
+            renderSlots();
+          });
+        }
+        grid.appendChild(b);
+      });
+      day.appendChild(grid);
+      wrap.appendChild(day);
+    });
+  }
+  renderSlots();
 
   document.getElementById('challenge-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var input = document.getElementById('ch-name');
     var name = input.value.trim();
     if (!name) { return; }
-    challengers.push({ name: name, datum: new Date().toLocaleDateString('de-DE') });
+    if (!slotWahl) {
+      setHint('Bitte zuerst oben einen Wunschtermin antippen — der Vorstand hat noch alles frei.', true);
+      return;
+    }
+    var gebucht = slotWahl;
+    challengers.push({ name: name, datum: new Date().toLocaleDateString('de-DE'), slot: gebucht });
     save('kfu-herausforderer', challengers);
+    slotWahl = null;
     renderChallengers();
+    renderSlots();
+    setHint('Duell gebucht: ' + gebucht + '. Der Vorstand freut sich. Wahrscheinlich.', false);
     input.value = '';
   });
 

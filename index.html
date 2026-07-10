@@ -17,13 +17,14 @@
 <body>
 <style>
   :root {
-    --cream: #F1EBDB;
-    --paper: #FAF6EA;
+    /* Offizielle Vereinsfarben laut Aufnaeher-Proof (Pantone Coated) */
+    --cream: #DDCBA4;    /* PMS 468 C */
+    --paper: #EAE1CB;    /* helle Tinte von 468 C */
     --ink: #1A1613;
-    --hop: #3A5222;
-    --hop-deep: #2C3F1A;
-    --crown: #C9971F;
-    --edge: #DCD2BA;
+    --hop: #2C5234;      /* PMS 350 C */
+    --hop-deep: #1E3A24; /* dunklere Tinte von 350 C */
+    --crown: #FFCD00;    /* PMS 116 C */
+    --edge: #C7B489;     /* dunklere Tinte von 468 C */
     --stamp: #9C3B26;
   }
 
@@ -133,8 +134,8 @@
   .ticker {
     background: var(--hop-deep);
     color: var(--cream);
-    border-top: 3px dashed rgba(241,235,219,.55);
-    border-bottom: 3px dashed rgba(241,235,219,.55);
+    border-top: 3px dashed rgba(221,203,164,.55);
+    border-bottom: 3px dashed rgba(221,203,164,.55);
     overflow: hidden;
     margin: 40px 0 0;
   }
@@ -263,7 +264,7 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 32%, #E4C463, var(--crown) 62%, #8F6A12);
+    background: radial-gradient(circle at 35% 32%, #FFE680, var(--crown) 62%, #B5850A);
     border: 2px solid var(--ink);
     box-shadow: 0 2px 4px rgba(26,22,19,.3);
   }
@@ -335,7 +336,7 @@
   }
   .scoreboard td { padding: 10px 12px; border-bottom: 1px dashed var(--edge); font-size: .96rem; }
   .scoreboard td.num { font-variant-numeric: tabular-nums; }
-  .scoreboard .champ td { background: rgba(201,151,31,.16); font-weight: 700; }
+  .scoreboard .champ td { background: rgba(255,205,0,.16); font-weight: 700; }
 
   .challenge-form, .idea-form { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
   .challenge-form input, .idea-form input {
@@ -427,8 +428,8 @@
   footer {
     margin-top: 70px;
     background: var(--hop-deep);
-    color: rgba(241,235,219,.92);
-    border-top: 3px dashed rgba(241,235,219,.55);
+    color: rgba(221,203,164,.92);
+    border-top: 3px dashed rgba(221,203,164,.55);
     text-align: center;
     padding: 34px 20px 40px;
   }
@@ -664,7 +665,7 @@
   <p>Kein eingetragener Verein &mdash; aber ein Ehrenwort.</p>
   <p>S&auml;mtliche Erl&ouml;se zugunsten des Kinderfests Isny.</p>
   <p class="croc" title="Ihr seid crazy.">🐊</p>
-  <p><a class="label" href="intern.html" style="color: rgba(241,235,219,.55); letter-spacing: .2em;">Mitglieder</a></p>
+  <p><a class="label" href="intern.html" style="color: rgba(221,203,164,.55); letter-spacing: .2em;">Mitglieder</a></p>
 </footer>
 
 <script>

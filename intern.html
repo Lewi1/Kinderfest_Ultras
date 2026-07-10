@@ -10,13 +10,14 @@
 <body>
 <style>
   :root {
-    --cream: #F1EBDB;
-    --paper: #FAF6EA;
+    /* Offizielle Vereinsfarben laut Aufnaeher-Proof (Pantone Coated) */
+    --cream: #DDCBA4;    /* PMS 468 C */
+    --paper: #EAE1CB;    /* helle Tinte von 468 C */
     --ink: #1A1613;
-    --hop: #3A5222;
-    --hop-deep: #2C3F1A;
-    --crown: #C9971F;
-    --edge: #DCD2BA;
+    --hop: #2C5234;      /* PMS 350 C */
+    --hop-deep: #1E3A24; /* dunklere Tinte von 350 C */
+    --crown: #FFCD00;    /* PMS 116 C */
+    --edge: #C7B489;     /* dunklere Tinte von 468 C */
     --stamp: #9C3B26;
   }
   * { box-sizing: border-box; }
@@ -52,7 +53,7 @@
   .btn:hover { background: var(--hop-deep); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
   .btn--ghost { background: transparent; color: var(--hop); border: 1px dashed var(--hop); }
-  .btn--ghost:hover { background: rgba(58,82,34,.08); }
+  .btn--ghost:hover { background: rgba(44,82,52,.08); }
   .btn--danger { background: transparent; color: var(--stamp); border: 1px dashed var(--stamp); }
   .btn--danger:hover { background: rgba(156,59,38,.1); }
   .btn--sm { padding: 5px 11px; font-size: .7rem; }
@@ -66,7 +67,7 @@
 
   .panel-head { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 14px; }
   .panel-head h2 { font-size: 1.15rem; margin: 0; }
-  .panel-head .count { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; color: var(--hop); background: rgba(58,82,34,.1); border-radius: 999px; padding: 2px 10px; font-size: .78rem; }
+  .panel-head .count { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; color: var(--hop); background: rgba(44,82,52,.1); border-radius: 999px; padding: 2px 10px; font-size: .78rem; }
 
   .badge { font-family: 'Arial Narrow', Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
   .badge--neu { background: transparent; color: var(--crown); border: 1px dashed var(--crown); }

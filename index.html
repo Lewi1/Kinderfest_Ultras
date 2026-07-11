@@ -222,7 +222,7 @@
     line-height: 1.05;
     font-variant-numeric: tabular-nums;
   }
-  .stat .label { color: var(--hop); margin-top: 6px; letter-spacing: .1em; max-width: 12ch; }
+  .stat .label { color: var(--hop); margin-top: 6px; letter-spacing: .1em; white-space: nowrap; }
 
   /* ---------- Manifest ---------- */
   .manifest p { max-width: 62ch; margin: 0 auto 1.1em; }
@@ -1019,8 +1019,10 @@
         setStat('stat-ideen', s.ideen);
       }).catch(function () {});
     }
-    // Erst diesen Aufruf melden, dann Zahlen holen (damit der eigene Besuch schon mitzaehlt)
+    // Diesen Besuch EINMALIG melden (zaehlt), dann Zahlen holen
     sbInsert('besuche', { visitor: vid }).catch(function () {}).then(ladeStats);
+    // Zahlen live halten: alle 2s nur abfragen (kein erneutes Zaehlen); pausiert im Hintergrund-Tab
+    setInterval(function () { if (!document.hidden) { ladeStats(); } }, 2000);
   })();
 </script>
 

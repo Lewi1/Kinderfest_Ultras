@@ -262,6 +262,46 @@ wenn jemand tricksen wollte, blockt die Datenbank jedes Ändern (RLS).
 
 ---
 
+## 8. Besucherzähler (unique + Gesamt-Aufrufe)
+
+Zeigt im Footer, wie viele Leute die Seite besucht haben. **Keine personenbezogenen
+Daten, keine IP** — nur eine zufällige ID pro Gerät (im Browser gespeichert). SQL
+Editor → Run:
+
+```sql
+-- ============ Besuche zaehlen ============
+create table if not exists public.besuche (
+  id         bigint generated always as identity primary key,
+  visitor    uuid not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.besuche enable row level security;
+grant insert on public.besuche to anon;
+
+-- Jeder darf einen Besuch melden (nur einfuegen, NICHT lesen -> kein Log auslesbar)
+create policy "besuche_insert_anon" on public.besuche
+  for insert to anon with check (true);
+
+-- Aggregierte Zahlen (gesamt + unique), oeffentlich abrufbar ohne Rohdaten
+create or replace function public.besucher_stats()
+returns json language sql stable security definer set search_path = public as $$
+  select json_build_object(
+    'gesamt', count(*),
+    'unique', count(distinct visitor)
+  ) from public.besuche;
+$$;
+revoke all on function public.besucher_stats() from public;
+grant execute on function public.besucher_stats() to anon;
+```
+
+- **gesamt** = jeder Seitenaufruf (auch Reloads).
+- **unique** = verschiedene Geräte (über die Zufalls-ID).
+- Die Rohdaten (`besuche`) kann niemand über die Website auslesen — nur die
+  fertige Summe über die Funktion.
+
+---
+
 ## Optional: Spam-Bremse
 
 ## Optional: Spam-Bremse

@@ -664,6 +664,7 @@
   <p class="label">Kinderfest Isny Ultras &middot; est. 2026</p>
   <p>Kein eingetragener Verein &mdash; aber ein Ehrenwort.</p>
   <p>S&auml;mtliche Erl&ouml;se zugunsten des Kinderfests Isny.</p>
+  <p class="label" id="besucher-zahl" style="color: rgba(221,203,164,.45); letter-spacing: .14em; margin-top: 16px; min-height: 1em;"></p>
   <p class="croc" title="Ihr seid crazy.">🐊</p>
   <p><a class="label" href="intern.html" style="color: rgba(221,203,164,.55); letter-spacing: .2em;">Mitglieder</a></p>
 </footer>
@@ -998,6 +999,26 @@
       }).then(function () { btn.disabled = false; });
     });
   }
+
+  // --- Besucherzaehler (unique + gesamt; keine personenbezogenen Daten, nur Zufalls-ID) ---
+  (function () {
+    if (!SB_ON) { return; }
+    var vid = localStorage.getItem('kfu-visitor');
+    if (!vid) {
+      vid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('v-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+      localStorage.setItem('kfu-visitor', vid);
+    }
+    // Diesen Aufruf melden (jeder Seitenaufruf zaehlt fuer "gesamt", die ID fuer "unique")
+    sbInsert('besuche', { visitor: vid }).catch(function () {});
+    // Zahlen holen und anzeigen
+    fetch(SUPABASE_URL + '/rest/v1/rpc/besucher_stats', {
+      method: 'POST', headers: sbHeaders({ 'Content-Type': 'application/json' }), body: '{}'
+    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (s) {
+      if (!s) { return; }
+      var box = document.getElementById('besucher-zahl');
+      if (box) { box.textContent = '🐊 ' + s.unique + ' Besucher · ' + s.gesamt + ' Aufrufe'; }
+    }).catch(function () {});
+  })();
 </script>
 
 </body>

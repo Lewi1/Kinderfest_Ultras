@@ -262,11 +262,12 @@ wenn jemand tricksen wollte, blockt die Datenbank jedes Ändern (RLS).
 
 ---
 
-## 8. Besucherzähler (unique + Gesamt-Aufrufe)
+## 8. Live-Zahlen auf der Startseite (Aufrufe, Besucher, Anmeldungen, Ideen)
 
-Zeigt im Footer, wie viele Leute die Seite besucht haben. **Keine personenbezogenen
-Daten, keine IP** — nur eine zufällige ID pro Gerät (im Browser gespeichert). SQL
-Editor → Run:
+Die vier Kreise unter „Zahlen & Fakten" zeigen jetzt echte Zahlen aus der Datenbank.
+Besuche werden über eine **zufällige ID pro Gerät** gezählt — **keine IP, keine
+personenbezogenen Daten**. Anmeldungen/Ideen werden nur als **Summe** ausgegeben,
+die Inhalte bleiben privat. SQL Editor → Run (idempotent, mehrfach ausführbar):
 
 ```sql
 -- ============ Besuche zaehlen ============
@@ -275,30 +276,33 @@ create table if not exists public.besuche (
   visitor    uuid not null,
   created_at timestamptz not null default now()
 );
-
 alter table public.besuche enable row level security;
 grant insert on public.besuche to anon;
-
--- Jeder darf einen Besuch melden (nur einfuegen, NICHT lesen -> kein Log auslesbar)
+drop policy if exists "besuche_insert_anon" on public.besuche;
 create policy "besuche_insert_anon" on public.besuche
   for insert to anon with check (true);
 
--- Aggregierte Zahlen (gesamt + unique), oeffentlich abrufbar ohne Rohdaten
-create or replace function public.besucher_stats()
+-- Kombinierte Startseiten-Zahlen (nur Summen, keine Rohdaten)
+create or replace function public.startseite_stats()
 returns json language sql stable security definer set search_path = public as $$
   select json_build_object(
-    'gesamt', count(*),
-    'unique', count(distinct visitor)
-  ) from public.besuche;
+    'aufrufe',     (select count(*) from public.besuche),
+    'besucher',    (select count(distinct visitor) from public.besuche),
+    'anmeldungen', (select count(*) from public.anwaerter),
+    'ideen',       (select count(*) from public.ideen)
+  );
 $$;
-revoke all on function public.besucher_stats() from public;
-grant execute on function public.besucher_stats() to anon;
+revoke all on function public.startseite_stats() from public;
+grant execute on function public.startseite_stats() to anon;
 ```
 
-- **gesamt** = jeder Seitenaufruf (auch Reloads).
-- **unique** = verschiedene Geräte (über die Zufalls-ID).
-- Die Rohdaten (`besuche`) kann niemand über die Website auslesen — nur die
-  fertige Summe über die Funktion.
+- **Aufrufe** = jeder Seitenaufruf (auch Reloads).
+- **Besucher** = verschiedene Geräte (über die Zufalls-ID).
+- **Anmeldungen** = Anzahl Bewerbungen · **Ideen** = Anzahl Ideen (nur die Zahl,
+  Inhalte kann niemand über die Website auslesen).
+
+> Hinweis: Das `drop policy if exists …` löst in Supabase die „destruktiv"-Warnung
+> aus — ist hier ungefährlich (löscht nur eine Regel und legt sie neu an).
 
 ---
 

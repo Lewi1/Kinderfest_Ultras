@@ -444,14 +444,12 @@
   <h1 class="display">Kinderfest <span class="isny">Isny</span> Ultras</h1>
   <p class="motto">Dreizehn Mitglieder. Eine Sonderplakette. Null freie Pl&auml;tze.</p>
 
-  <p class="countdown-title label" id="countdown-title">Countdown zum Kinderfest</p>
-  <div class="countdown" id="countdown" aria-live="polite">
-    <div class="unit"><span class="num" id="cd-d">–</span><span class="label">Tage</span></div>
-    <div class="unit"><span class="num" id="cd-h">–</span><span class="label">Std.</span></div>
-    <div class="unit"><span class="num" id="cd-m">–</span><span class="label">Min.</span></div>
-    <div class="unit"><span class="num" id="cd-s">–</span><span class="label">Sek.</span></div>
+  <div class="stats">
+    <div class="stat"><span class="num" id="stat-aufrufe">&ndash;</span><span class="label">Aufrufe</span></div>
+    <div class="stat"><span class="num" id="stat-besucher">&ndash;</span><span class="label">Besucher</span></div>
+    <div class="stat"><span class="num" id="stat-anmeldungen">&ndash;</span><span class="label">Anmeldungen</span></div>
+    <div class="stat"><span class="num" id="stat-ideen">&ndash;</span><span class="label">Ideen</span></div>
   </div>
-  <p class="fest-now display" id="fest-now" hidden>Es ist Kinderfest! 🎉</p>
 </header>
 
 <div class="ticker" aria-label="Vereinsnachrichten">
@@ -467,13 +465,15 @@
 </div>
 
 <main>
-  <section aria-label="Zahlen und Fakten">
-    <div class="stats">
-      <div class="stat"><span class="num" id="stat-aufrufe">&ndash;</span><span class="label">Aufrufe</span></div>
-      <div class="stat"><span class="num" id="stat-besucher">&ndash;</span><span class="label">Besucher</span></div>
-      <div class="stat"><span class="num" id="stat-anmeldungen">&ndash;</span><span class="label">Anmeldungen</span></div>
-      <div class="stat"><span class="num" id="stat-ideen">&ndash;</span><span class="label">Ideen</span></div>
+  <section aria-label="Countdown zum Kinderfest" style="text-align: center;">
+    <p class="countdown-title label" id="countdown-title">Countdown zum Kinderfest</p>
+    <div class="countdown" id="countdown" aria-live="polite">
+      <div class="unit"><span class="num" id="cd-d">&ndash;</span><span class="label">Tage</span></div>
+      <div class="unit"><span class="num" id="cd-h">&ndash;</span><span class="label">Std.</span></div>
+      <div class="unit"><span class="num" id="cd-m">&ndash;</span><span class="label">Min.</span></div>
+      <div class="unit"><span class="num" id="cd-s">&ndash;</span><span class="label">Sek.</span></div>
     </div>
+    <p class="fest-now display" id="fest-now" hidden>Es ist Kinderfest! 🎉</p>
   </section>
 
   <section class="manifest">

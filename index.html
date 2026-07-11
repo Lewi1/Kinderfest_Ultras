@@ -1023,6 +1023,9 @@
     sbInsert('besuche', { visitor: vid }).catch(function () {}).then(ladeStats);
     // Zahlen live halten: alle 2s nur abfragen (kein erneutes Zaehlen); pausiert im Hintergrund-Tab
     setInterval(function () { if (!document.hidden) { ladeStats(); } }, 2000);
+    // Beim Zurueckkehren auf den Tab sofort aktualisieren (Tab-Wechsel bzw. Zurueck-Taste am Handy)
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { ladeStats(); } });
+    window.addEventListener('pageshow', function () { if (!document.hidden) { ladeStats(); } });
   })();
 </script>
 
